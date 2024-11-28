@@ -134,20 +134,47 @@ function changeTheme() {
   document.documentElement.style.setProperty("--theme-hover-color", theme.hover);
 }
 
-// Open preview in a new tab
+// Function for error handling when opening the preview
 function openPreview() {
-  const html = htmlEditor.value;
-  const css = cssEditor.value;
-  const js = jsEditor.value;
+  const html = htmlEditor.value.trim();
+  const css = cssEditor.value.trim();
+  const js = jsEditor.value.trim();
+  if (!html && !css && !js) {
+    let errorPopup = document.getElementById('new-tab-error');
+    if (!errorPopup) {
+      errorPopup = document.createElement('div');
+      errorPopup.id = 'new-tab-error';
+      errorPopup.textContent = 'Error: Please fill out at least one editor (HTML, CSS, JavaScript) before previewing.';
+      document.body.appendChild(errorPopup);
+    }
+    errorPopup.classList.add('show');
 
-  const hasBackgroundColor = /background-color/.test(css); // Ensure background color is handled
+    let errorBackdrop = document.getElementById('new-tab-error-backdrop');
+    if (!errorBackdrop) {
+      errorBackdrop = document.createElement('div');
+      errorBackdrop.id = 'new-tab-error-backdrop';
+      document.body.appendChild(errorBackdrop);
+    }
+    errorBackdrop.classList.add('show');
+
+    setTimeout(() => {
+      errorPopup.classList.remove('show');
+      errorBackdrop.classList.remove('show');
+      setTimeout(() => {
+        errorPopup.remove();
+        errorBackdrop.remove();
+      }, 300);
+    }, 3000);
+
+    return;
+  }
 
   const content = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
       <style>
-        body { background-color: ${hasBackgroundColor ? "inherit" : "#fff"}; }
+        body { background-color: #fff; }
         ${css}
       </style>
     </head>
@@ -155,13 +182,15 @@ function openPreview() {
       ${html}
       <script>${js}<\/script>
     </body>
-    </html>`;
+    </html>
+  `;
 
-  // Open the content in a new tab and write it to the document
   const newTab = window.open();
-  newTab.document.write(content);  // Inject the content
-  newTab.document.close();         // Close the document for proper rendering
+  newTab.document.write(content);
+  newTab.document.close();
 }
+
+
 
 // Event listeners for auto-save and update preview
 [htmlEditor, cssEditor, jsEditor].forEach((editor) => {
