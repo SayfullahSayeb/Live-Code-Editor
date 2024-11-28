@@ -50,6 +50,49 @@
     background-color: var(--theme-hover-color, #388e3c);
   }
   
+  button:focus,
+  select:focus {
+    outline: none;
+  }
+
+  
+/* Copy Popup Styling */
+#copy-popup {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--theme-color, #4caf50); /* Default green for success */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10000; /* Ensure the popup appears above the backdrop */
+    font-size: 14px;
+    opacity: 0; /* Start with opacity 0 */
+    transition: opacity 0.1s ease; /* Transition opacity for faster appearance */
+}
+
+/* Error message popup red background */
+#copy-popup.error {
+    background-color: #e74c3c; /* Red background for error */
+}
+
+/* The backdrop to darken and blur the background */
+#copy-popup-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+    z-index: 9999; /* Ensure the backdrop is below the popup */
+    backdrop-filter: blur(5px); /* Blur effect on the background */
+    transition: background 0.1s ease; /* Transition background for a faster blur effect */
+}
+
+  
   main {
     display: flex;
     flex-grow: 1;
