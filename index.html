@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Previewer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-dark.min.css">
+</head>
+<body>
+  <header>
+    <h1>Code Previewer</h1>
+    <div class="controls">
+      <button onclick="clearAll()">Clear All</button>
+      <button onclick="downloadCode()">Download Code</button>
+      <button onclick="openPreview()">Open in New Tab</button>
+      <select id="theme-selector" onchange="changeTheme()">
+        <option value="default">Default</option>
+        <option value="purple">Purple</option>
+        <option value="blue">Blue</option>
+      </select>
+    </div>
+  </header>
+  <main>
+    <div class="editors">
+      <div class="editor">
+        <div class="editor-header">
+          <label for="html-editor">HTML</label>
+          <button class="copy-btn" onclick="copyCode('html')">Copy</button>
+        </div>
+        <textarea id="html-editor" placeholder="Write your HTML here..."></textarea>
+      </div>
+      <div class="editor">
+        <div class="editor-header">
+          <label for="css-editor">CSS</label>
+          <button class="copy-btn" onclick="copyCode('css')">Copy</button>
+        </div>
+        <textarea id="css-editor" placeholder="Write your CSS here..."></textarea>
+      </div>
+      <div class="editor">
+        <div class="editor-header">
+          <label for="js-editor">JavaScript</label>
+          <button class="copy-btn" onclick="copyCode('js')">Copy</button>
+        </div>
+        <textarea id="js-editor" placeholder="Write your JavaScript here..."></textarea>
+      </div>
+    </div>
+    <div class="preview-container">
+      <iframe id="preview"></iframe>
+    </div>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
