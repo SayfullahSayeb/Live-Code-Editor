@@ -1,229 +1,224 @@
 /* Reset */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #121212;
-    color: #e0e0e0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #1e1e1e;
-    padding: 15px 20px;
-    border-bottom: 1px solid #333;
-  }
-  
-  header h1 {
-    font-size: 20px;
-    color: var(--theme-color, #4caf50);
-  }
-  
-  header .controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  
-  button,
-  select,
-  .copy-btn {
-    background-color: var(--theme-color, #4caf50);
-    color: #ffffff;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  
-  button:hover,
-  select:hover,
-  .copy-btn:hover {
-    background-color: var(--theme-hover-color, #388e3c);
-  }
-  
-  button:focus,
-  select:focus,
-  .copy-btn:focus {
-    outline: none;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  .copy-btn {  
-    padding: 5px 10px; 
-    margin-bottom: 5px;
-    font-size: 12px; 
+body {
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e1e1e;
+  padding: 15px 20px;
+  border-bottom: 1px solid #333;
+}
+
+header h1 {
+  font-size: 20px;
+  color: var(--theme-color, #4caf50);
+}
+
+header .controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+button,
+select,
+.copy-btn {
+  background-color: var(--theme-color, #4caf50);
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover,
+select:hover,
+.copy-btn:hover {
+  background-color: var(--theme-hover-color, #388e3c);
+}
+
+button:focus,
+select:focus,
+.copy-btn:focus {
+  outline: none;
+}
+
+.copy-btn {
+  padding: 5px 10px;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+/* Common Popup Styling */
+#copy-popup, #new-tab-error {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: var(--theme-color, #4caf50);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+#copy-popup.error, #new-tab-error{
+  background-color: #e74c3c;
+}
+
+#new-tab-error-backdrop, #copy-popup-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+  transition: background 0.1s ease;
+}
+
+#new-tab-error.show, #copy-popup.show, #new-tab-error-backdrop.show {
+  display: block;
+  opacity: 1;
 }
 
 
-/* Copy Popup Styling */
-#copy-popup {
-    display: none;
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: var(--theme-color, #4caf50); /* Default green for success */
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 10000; /* Ensure the popup appears above the backdrop */
-    font-size: 14px;
-    opacity: 0; /* Start with opacity 0 */
-    transition: opacity 0.1s ease; /* Transition opacity for faster appearance */
+main {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
 }
 
-/* Error message popup red background */
-#copy-popup.error {
-    background-color: #e74c3c; /* Red background for error */
-}
-
-/* The backdrop to darken and blur the background */
-#copy-popup-backdrop {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-    z-index: 9999; /* Ensure the backdrop is below the popup */
-    backdrop-filter: blur(5px); /* Blur effect on the background */
-    transition: background 0.1s ease; /* Transition background for a faster blur effect */
-}
-
-  
-  main {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-  }
-  
 /* Editor Container Styling */
 .editors {
-    display: flex;
-    gap: 10px;
-    padding: 10px;
-    flex-wrap: wrap; /* Allows wrapping on smaller screens */
-    justify-content: space-between;
-  }
-  
-  /* Individual Editor Styling */
-  .editor {
-    flex: 1 1 30%; /* Each editor takes 30% width and wraps if screen is small */
-    max-width: 32%; /* Prevents the editor from becoming too wide */
-    min-width: 300px; /* Ensures a minimum width for usability */
-    height: 350px; /* Standard height */
-    display: flex;
-    flex-direction: column;
-    background-color: #1e1e1e;
-    border-radius: 5px;
-    padding: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Editor Header */
-  .editor-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: var(--theme-color, #4caf50);
-  }
-  
-  /* Textarea Styling */
-  textarea {
-    flex-grow: 1;
-    resize: none;
-    border: none;
-    border-radius: 5px;
-    background-color: #121212;
-    color: #e0e0e0;
-    padding: 10px;
-    font-family: "Courier New", monospace;
-    font-size: 14px;
-    outline: none;
-    overflow-y: auto;
-    height: 100%; /* Fills the editor box */
-  }
-  
-  textarea:focus {
-    border: 1px solid var(--theme-color, #4caf50);
-  }
-  
-  textarea::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  textarea::-webkit-scrollbar-thumb {
-    background-color: var(--theme-color, #4caf50);
-    border-radius: 5px;
-  }
-  
-  textarea::-webkit-scrollbar-track {
-    background-color: #1e1e1e;
-  }
-  
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.editor {
+  flex: 1 1 30%;
+  max-width: 32%;
+  min-width: 300px;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: var(--theme-color, #4caf50);
+}
+
+textarea {
+  flex-grow: 1;
+  resize: none;
+  border: none;
+  border-radius: 5px;
+  background-color: #121212;
+  color: #e0e0e0;
+  padding: 10px;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  outline: none;
+  overflow-y: auto;
+  height: 100%;
+}
+
+textarea:focus {
+  border: 1px solid var(--theme-color, #4caf50);
+}
+
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background-color: var(--theme-color, #4caf50);
+  border-radius: 5px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background-color: #1e1e1e;
+}
+
 /* Preview Container */
 .preview-container {
-    flex: 1;
-    background-color: #000; /* Default black background */
-    border-top: 1px solid #333;
-    height: 400px; /* Standard height */
-    resize: vertical; /* Allow vertical resizing */
-    overflow: hidden; /* Prevent container scrollbars */
-    margin-top: 10px;
-    border-radius: 5px;
-  }
-  
-  /* Iframe Styling */
-  iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    border-radius: 5px;
-    overflow: auto; /* Allow scrolling within the iframe */
-  }
-  
-  iframe::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  iframe::-webkit-scrollbar-thumb {
-    background-color: var(--theme-color, #4caf50);
-    border-radius: 5px;
-  }
-  
-  iframe::-webkit-scrollbar-track {
-    background-color: #1e1e1e;
-  }
-  
-  /* Responsive Adjustments */
+  flex: 1;
+  background-color: #000;
+  border-top: 1px solid #333;
+  height: 400px;
+  resize: vertical;
+  overflow: hidden;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 5px;
+  overflow: auto;
+}
+
+iframe::-webkit-scrollbar {
+  width: 8px;
+}
+
+iframe::-webkit-scrollbar-thumb {
+  background-color: var(--theme-color, #4caf50);
+  border-radius: 5px;
+}
+
+iframe::-webkit-scrollbar-track {
+  background-color: #1e1e1e;
+}
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-    .editors {
-      flex-direction: column;
-      gap: 20px;
-    }
-  
-    .editor {
-      flex: 1 1 100%;
-      max-width: 100%;
-    }
+  .editors {
+    flex-direction: column;
+    gap: 20px;
   }
 
-  /* Responsive Adjustments */
-@media (max-width: 768px) {
-    .preview-container {
-      height: 300px; /* Adjusted height for smaller screens */
-    }
+  .editor {
+    flex: 1 1 100%;
+    max-width: 100%;
   }
+
+  .preview-container {
+    height: 300px;
+  }
+}
