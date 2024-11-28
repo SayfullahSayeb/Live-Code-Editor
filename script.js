@@ -47,10 +47,49 @@ function updatePreview() {
 
 // Copy code to clipboard
 function copyCode(type) {
-  const editor = type === "html" ? htmlEditor : type === "css" ? cssEditor : jsEditor;
-  navigator.clipboard.writeText(editor.value).then(() => {
-    alert(`${type.toUpperCase()} code copied to clipboard!`);
-  });
+    const editor = type === "html" ? htmlEditor : type === "css" ? cssEditor : jsEditor;
+
+    // Check if the code box is empty
+    if (editor.value.trim() === "") {
+        showCopyPopup("Error: The code box is empty! Please enter some code.", true);  // Pass 'true' for error
+        return;
+    }
+
+    navigator.clipboard.writeText(editor.value).then(() => {
+        showCopyPopup(`${type.toUpperCase()} code copied!`, false);  // Pass 'false' for success
+    });
+}
+
+// Show the copy popup and apply the blur effect
+function showCopyPopup(message, isError) {
+    const copyPopup = document.getElementById("copy-popup"); // Get popup element
+    const backdrop = document.getElementById("copy-popup-backdrop"); // Get the backdrop
+
+    // Show the popup and backdrop
+    copyPopup.textContent = message;
+    copyPopup.style.display = "block";
+    backdrop.style.display = "block";
+
+    // Add error class if isError is true (red background)
+    if (isError) {
+        copyPopup.classList.add("error");
+    } else {
+        copyPopup.classList.remove("error");
+    }
+
+    // Fade in the popup with opacity transition
+    setTimeout(() => {
+        copyPopup.style.opacity = 1;
+    }, 10); // Small delay to allow styles to apply
+
+    setTimeout(() => {
+        // Hide the popup and backdrop after 2 seconds
+        copyPopup.style.opacity = 0; // Fade out
+        setTimeout(() => {
+            copyPopup.style.display = "none"; // Completely hide after fade
+            backdrop.style.display = "none";
+        }, 100); // Allow time for the fade out before hiding
+    }, 2000); // Show for 2 seconds
 }
 
 // Download code as a zip file
