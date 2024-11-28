@@ -94,18 +94,29 @@ function showCopyPopup(message, isError) {
 
 // Download code as a zip file
 function downloadCode() {
-  const zip = new JSZip();
-  if (htmlEditor.value.trim()) zip.file("index.html", htmlEditor.value.trim());
-  if (cssEditor.value.trim()) zip.file("style.css", cssEditor.value.trim());
-  if (jsEditor.value.trim()) zip.file("script.js", jsEditor.value.trim());
-
-  zip.generateAsync({ type: "blob" }).then((content) => {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(content);
-    a.download = "code_preview.zip";
-    a.click();
-  });
-}
+    // Check if all code boxes are empty
+    if (!htmlEditor.value.trim() && !cssEditor.value.trim() && !jsEditor.value.trim()) {
+      // Show an error if all boxes are empty
+      showCopyPopup("Error: No code to download! Please add code to at least one editor.", true);
+      return; // Prevent zip download if no code
+    }
+  
+    const zip = new JSZip();
+  
+    // Add files to the zip if they have content
+    if (htmlEditor.value.trim()) zip.file("index.html", htmlEditor.value.trim());
+    if (cssEditor.value.trim()) zip.file("style.css", cssEditor.value.trim());
+    if (jsEditor.value.trim()) zip.file("script.js", jsEditor.value.trim());
+  
+    // Generate and trigger download of the zip
+    zip.generateAsync({ type: "blob" }).then(content => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(content);
+      a.download = "code_preview.zip";
+      a.click();
+    });
+  }
+  
 
 // Clear all fields and localStorage
 function clearAll() {
