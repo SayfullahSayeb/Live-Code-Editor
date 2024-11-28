@@ -35,7 +35,8 @@
   }
   
   button,
-  select {
+  select,
+  .copy-btn {
     background-color: var(--theme-color, #4caf50);
     color: #ffffff;
     border: none;
@@ -46,16 +47,24 @@
   }
   
   button:hover,
-  select:hover {
+  select:hover,
+  .copy-btn:hover {
     background-color: var(--theme-hover-color, #388e3c);
   }
   
   button:focus,
-  select:focus {
+  select:focus,
+  .copy-btn:focus {
     outline: none;
   }
 
-  
+  .copy-btn {  
+    padding: 5px 10px; 
+    margin-bottom: 5px;
+    font-size: 12px; 
+}
+
+
 /* Copy Popup Styling */
 #copy-popup {
     display: none;
