@@ -17,24 +17,25 @@ window.addEventListener("load", () => {
   htmlEditor.value = localStorage.getItem("html") || "";
   cssEditor.value = localStorage.getItem("css") || "";
   jsEditor.value = localStorage.getItem("js") || "";
-  updatePreview();
+  updatePreview(); // Load the preview on page load
 });
 
-// Update preview
+// Update preview in iframe
 function updatePreview() {
   const html = htmlEditor.value;
   const css = cssEditor.value;
   const js = jsEditor.value;
 
-  const background = css.includes("background-color")
-    ? ""
-    : "body { background-color: #121212; }";
+  const hasBackgroundColor = /background-color/.test(css);
 
   const content = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <style>${background} ${css}</style>
+      <style>
+        body { background-color: ${hasBackgroundColor ? "inherit" : "#fff"}; }
+        ${css}
+      </style>
     </head>
     <body>
       ${html}
@@ -52,7 +53,7 @@ function copyCode(type) {
   });
 }
 
-// Download code
+// Download code as a zip file
 function downloadCode() {
   const zip = new JSZip();
   if (htmlEditor.value.trim()) zip.file("index.html", htmlEditor.value.trim());
@@ -67,13 +68,13 @@ function downloadCode() {
   });
 }
 
-// Clear all fields
+// Clear all fields and localStorage
 function clearAll() {
   htmlEditor.value = "";
   cssEditor.value = "";
   jsEditor.value = "";
   localStorage.clear();
-  updatePreview();
+  updatePreview(); // Reset the preview after clearing
 }
 
 // Change theme
@@ -83,55 +84,41 @@ function changeTheme() {
   document.documentElement.style.setProperty("--theme-hover-color", theme.hover);
 }
 
-function updatePreview() {
-    const html = htmlEditor.value;
-    const css = cssEditor.value;
-    const js = jsEditor.value;
-  
-    const hasBackgroundColor = /background-color/.test(css);
-  
-    const content = `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <style>
-          body { background-color: ${hasBackgroundColor ? "inherit" : "#fff"}; }
-          ${css}
-        </style>
-      </head>
-      <body>
-        ${html}
-        <script>${js}<\/script>
-      </body>
-      </html>`;
-    iframe.srcdoc = content;
-  }
-  
+// Open preview in a new tab
+function openPreview() {
+  const html = htmlEditor.value;
+  const css = cssEditor.value;
+  const js = jsEditor.value;
 
-// Event listeners
+  const hasBackgroundColor = /background-color/.test(css); // Ensure background color is handled
+
+  const content = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <style>
+        body { background-color: ${hasBackgroundColor ? "inherit" : "#fff"}; }
+        ${css}
+      </style>
+    </head>
+    <body>
+      ${html}
+      <script>${js}<\/script>
+    </body>
+    </html>`;
+
+  // Open the content in a new tab and write it to the document
+  const newTab = window.open();
+  newTab.document.write(content);  // Inject the content
+  newTab.document.close();         // Close the document for proper rendering
+}
+
+// Event listeners for auto-save and update preview
 [htmlEditor, cssEditor, jsEditor].forEach((editor) => {
   editor.addEventListener("input", () => {
-    updatePreview();
-    localStorage.setItem(editor.id, editor.value);
+    updatePreview(); // Update preview whenever input changes
+    localStorage.setItem("html", htmlEditor.value); // Auto-save to localStorage for HTML
+    localStorage.setItem("css", cssEditor.value);  // Auto-save to localStorage for CSS
+    localStorage.setItem("js", jsEditor.value);    // Auto-save to localStorage for JS
   });
 });
-
-
-function changeTheme() {
-    const themeSelector = document.getElementById("theme-selector").value;
-  
-    const themes = {
-      default: { main: "#4caf50", hover: "#388e3c" },
-      purple: { main: "#a95cc5", hover: "#8b48b1" },
-      blue: { main: "#2196f3", hover: "#1976d2" },
-    };
-  
-    const selectedTheme = themes[themeSelector] || themes.default;
-  
-    // Apply theme colors
-    document.documentElement.style.setProperty("--theme-color", selectedTheme.main);
-    document.documentElement.style.setProperty("--theme-hover-color", selectedTheme.hover);
-  }
-  
-
-  
