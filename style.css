@@ -65,6 +65,45 @@ header h1 {
   white-space: nowrap;
 }
 
+header h1 a {
+  text-decoration: none;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s;
+}
+
+header h1 a:hover {
+  color: var(--theme-color);
+}
+
+header h1 a i {
+  font-size: 1.4rem;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+header h1 a:hover i {
+  color: var(--theme-color);
+}
+
+[data-theme="light"] header h1 a {
+  color: #2c3e50;
+}
+
+[data-theme="dark"] header h1 a {
+  color: #e0e0e0;
+}
+
+[data-theme="light"] header h1 a i {
+  color: #7f8c8d;
+}
+
+[data-theme="dark"] header h1 a i {
+  color: #95a5a6;
+}
+
 /* Control Sections */
 .controls {
   display: flex;
