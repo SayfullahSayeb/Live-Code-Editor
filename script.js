@@ -187,16 +187,19 @@ function openPreview() {
 // View switching functionality
 function changeView(viewType) {
     const main = document.querySelector('main');
-    
+    const editors = document.querySelector('.editors');
+    const preview = document.querySelector('.preview-container');
+
     // Remove all view classes
-    main.classList.remove('view-bottom-preview');
-    main.classList.remove('view-left-preview');
-    main.classList.remove('view-right-preview');
+    main.classList.remove('view-bottom-preview', 'view-left-preview', 'view-right-preview');
     
     // Add new view class
-    main.classList.add(`view-${viewType}`);
-    
-    // Update active state of view buttons
+    main.classList.add(viewType);
+
+    // Save the view preference
+    localStorage.setItem('preferredView', viewType);
+
+    // Update buttons
     document.querySelectorAll('.view-button').forEach(button => {
         button.classList.remove('active');
         if (button.dataset.view === viewType) {
@@ -204,8 +207,8 @@ function changeView(viewType) {
         }
     });
 
-    // Re-initialize resizer for new view
-    // Removed resizer initialization
+    // Update preview
+    updatePreview();
 }
 
 // Initialize view buttons
