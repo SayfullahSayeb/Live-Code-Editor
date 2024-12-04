@@ -20,6 +20,10 @@ window.addEventListener("load", () => {
     const themeToggle = document.getElementById('theme-toggle');
     themeToggle.innerHTML = `<i class="fas fa-${savedTheme === 'light' ? 'sun' : 'moon'}"></i>`;
   }
+  
+  // Load saved view mode preference
+  const savedMode = localStorage.getItem('preferredViewMode') || 'bottom';
+  changeView(savedMode);
 });
 
 // Update preview in iframe
@@ -184,40 +188,41 @@ function openPreview() {
   showCopyPopup('Preview opened in new tab!', false);
 }
 
-// View switching functionality
-function changeView(viewType) {
-    const main = document.querySelector('main');
-    const editors = document.querySelector('.editors');
-    const preview = document.querySelector('.preview-container');
+// View Mode Management
+const viewModePopup = document.getElementById('view-mode-popup');
+const viewModeBackdrop = document.getElementById('view-mode-popup-backdrop');
+const mainContainer = document.querySelector('main');
 
-    // Remove all view classes
-    main.classList.remove('view-bottom-preview', 'view-left-preview', 'view-right-preview');
-    
-    // Add new view class
-    main.classList.add(viewType);
-
-    // Save the view preference
-    localStorage.setItem('preferredView', viewType);
-
-    // Update buttons
-    document.querySelectorAll('.view-button').forEach(button => {
-        button.classList.remove('active');
-        if (button.dataset.view === viewType) {
-            button.classList.add('active');
-        }
-    });
-
-    // Update preview
-    updatePreview();
+function showViewModePopup() {
+  viewModePopup.classList.add('show');
+  viewModeBackdrop.style.display = 'block';
 }
 
-// Initialize view buttons
-document.querySelectorAll('.view-button').forEach(button => {
-    button.addEventListener('click', () => {
-        const viewType = button.dataset.view;
-        changeView(viewType);
-    });
-});
+function hideViewModePopup() {
+  viewModePopup.classList.remove('show');
+  viewModeBackdrop.style.display = 'none';
+}
+
+function changeView(mode) {
+  mainContainer.className = ''; // Clear existing classes
+  
+  switch(mode) {
+    case 'bottom':
+      mainContainer.classList.add('view-vertical');
+      break;
+    case 'left':
+      mainContainer.classList.add('view-horizontal', 'preview-left');
+      break;
+    case 'right':
+      mainContainer.classList.add('view-horizontal', 'preview-right');
+      break;
+  }
+  
+  // Save the view mode preference
+  localStorage.setItem('preferredViewMode', mode);
+  hideViewModePopup();
+  updatePreview(); // Refresh the preview
+}
 
 // Event listeners for auto-save and update preview
 [htmlEditor, cssEditor, jsEditor].forEach((editor) => {
@@ -245,120 +250,27 @@ document.querySelectorAll('.view-button').forEach(button => {
   });
 });
 
-// Load layout when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Initial layout setup
-    initializeDefaultLayout();
-    
-    // Load any saved layout
-    loadLayout();
-});
-
-// Initialize default layout
-function initializeDefaultLayout() {
-    const main = document.querySelector('main');
-    const editors = document.querySelector('.editors');
-    const preview = document.querySelector('.preview-container');
-    
-    // Determine current view
-    const currentView = Array.from(main.classList)
-        .find(cls => cls.startsWith('view-')) || 'view-bottom-preview';
-    
-    // Set default sizes based on view
-    if (currentView === 'view-bottom-preview') {
-        editors.style.height = '30%';
-        preview.style.height = '70%';
-    } else {
-        // Left and right preview
-        editors.style.width = '30%';
-        preview.style.width = '70%';
-    }
-}
-
-// Load saved view preference
-function loadSavedView() {
-    const savedView = localStorage.getItem('preferredView');
-    if (savedView) {
-        changeView(savedView);
-    }
-}
-
-// Removed resizer functionality
-let isResizing = false;
-let currentResizer = null;
-let startPos = 0;
-let startSize = 0;
-
-function initResize(e) {
-    // This function is no longer needed
-}
-
-function resize(e) {
-    // This function is no longer needed
-}
-
-function updateSizeDisplay(display, resizer, size) {
-    // This function is no longer needed
-}
-
-function stopResize() {
-    // This function is no longer needed
-}
-
-function initializeResizer() {
-    // This function is no longer needed
-}
-
-// Remove any event listeners related to resizing
-function removeResizerEventListeners() {
-    document.removeEventListener('mousemove', resize);
-    document.removeEventListener('mouseup', stopResize);
-}
-
-// Call this function to clean up any resizer-related setup
-document.addEventListener('DOMContentLoaded', removeResizerEventListeners);
-
-// View Mode Popup
-const viewModeBtn = document.getElementById('view-mode-btn');
-const viewModePopup = document.getElementById('view-mode-popup');
-
-viewModeBtn.addEventListener('click', () => {
-  viewModePopup.classList.add('show');
-});
-
-// Close popup when clicking outside
-viewModePopup.addEventListener('click', (e) => {
-  if (e.target === viewModePopup) {
-    viewModePopup.classList.remove('show');
-  }
-});
-
-function changeView(mode) {
-  const main = document.querySelector('main');
-  main.className = `view-${mode}`;
-  viewModePopup.classList.remove('show');
-  localStorage.setItem('viewMode', mode);
-}
-
-// Load saved view mode
-const savedViewMode = localStorage.getItem('viewMode');
-if (savedViewMode) {
-  changeView(savedViewMode);
-}
-
 // Toggle between light and dark theme
 function toggleTheme() {
-  const html = document.documentElement;
-  const themeToggle = document.getElementById('theme-toggle');
-  const currentTheme = html.getAttribute('data-theme');
+  const root = document.documentElement;
+  const currentTheme = root.getAttribute('data-theme');
   const newTheme = currentTheme === 'light' ? 'dark' : 'light';
   
-  html.setAttribute('data-theme', newTheme);
-  themeToggle.innerHTML = `<i class="fas fa-${newTheme === 'light' ? 'sun' : 'moon'}"></i>`;
-  
-  // Save theme preference
+  root.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
+  
+  // Update theme toggle icon
+  const themeToggle = document.getElementById('theme-toggle');
+  themeToggle.innerHTML = `<i class="fas fa-${newTheme === 'light' ? 'sun' : 'moon'}"></i>`;
 }
 
 // Add theme toggle click handler
 document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+// Event Listeners
+document.getElementById('view-mode-btn').addEventListener('click', showViewModePopup);
+viewModeBackdrop.addEventListener('click', hideViewModePopup);
+
+document.getElementById('view-mode-bottom').addEventListener('click', () => changeView('bottom'));
+document.getElementById('view-mode-left').addEventListener('click', () => changeView('left'));
+document.getElementById('view-mode-right').addEventListener('click', () => changeView('right'));
