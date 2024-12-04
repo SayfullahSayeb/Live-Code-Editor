@@ -462,36 +462,38 @@ iframe {
 }
 
 /* Popups */
-#copy-popup-backdrop {
+#copy-popup,
+.delete-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  background-color: var(--theme-color);
+  color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
   display: none;
+}
+
+#copy-popup.error,
+.delete-popup.error {
+  background-color: #dc3545;
+}
+
+#copy-popup-backdrop,
+.delete-popup-backdrop {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
-  z-index: 998;
-}
-
-#copy-popup {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--theme-color);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
   z-index: 999;
-  opacity: 0;
-  transition: opacity 0.3s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-#copy-popup.error {
-  background: #f44336;
+  display: none;
 }
 
 /* View Mode Popup */

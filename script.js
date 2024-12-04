@@ -144,14 +144,11 @@ function deleteCode(type) {
     return;
   }
 
-  // Ask for confirmation
-  if (confirm(`Are you sure you want to delete all ${type.toUpperCase()} code?`)) {
-    editor.textContent = '';
-    localStorage.setItem(type, '');
-    Prism.highlightElement(editor);
-    updatePreview();
-    showCopyPopup(`${type.toUpperCase()} code deleted!`, false);
-  }
+  editor.textContent = '';
+  localStorage.setItem(type, '');
+  Prism.highlightElement(editor);
+  updatePreview();
+  showCopyPopup(`${type.toUpperCase()} code deleted!`, false);
 }
 
 // Open preview in new tab
@@ -159,33 +156,9 @@ function openPreview() {
   const html = htmlEditor.textContent.trim();
   const css = cssEditor.textContent.trim();
   const js = jsEditor.textContent.trim();
+  
   if (!html && !css && !js) {
-    let errorPopup = document.getElementById('new-tab-error');
-    if (!errorPopup) {
-      errorPopup = document.createElement('div');
-      errorPopup.id = 'new-tab-error';
-      errorPopup.textContent = 'Error: Please fill out at least one editor (HTML, CSS, JavaScript) before previewing.';
-      document.body.appendChild(errorPopup);
-    }
-    errorPopup.classList.add('show');
-
-    let errorBackdrop = document.getElementById('new-tab-error-backdrop');
-    if (!errorBackdrop) {
-      errorBackdrop = document.createElement('div');
-      errorBackdrop.id = 'new-tab-error-backdrop';
-      document.body.appendChild(errorBackdrop);
-    }
-    errorBackdrop.classList.add('show');
-
-    setTimeout(() => {
-      errorPopup.classList.remove('show');
-      errorBackdrop.classList.remove('show');
-      setTimeout(() => {
-        errorPopup.remove();
-        errorBackdrop.remove();
-      }, 300);
-    }, 3000);
-
+    showCopyPopup('Error: Please fill out at least one editor (HTML, CSS, JavaScript) before previewing.', true);
     return;
   }
 
@@ -208,6 +181,7 @@ function openPreview() {
   const newTab = window.open();
   newTab.document.write(content);
   newTab.document.close();
+  showCopyPopup('Preview opened in new tab!', false);
 }
 
 // View switching functionality
