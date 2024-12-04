@@ -14,17 +14,27 @@ const themes = {
 
 // Auto-save functionality
 window.addEventListener("load", () => {
-  htmlEditor.value = localStorage.getItem("html") || "";
-  cssEditor.value = localStorage.getItem("css") || "";
-  jsEditor.value = localStorage.getItem("js") || "";
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.innerHTML = `<i class="fas fa-${savedTheme === 'light' ? 'sun' : 'moon'}"></i>`;
+  }
+  
+  htmlEditor.textContent = localStorage.getItem("html") || "";
+  cssEditor.textContent = localStorage.getItem("css") || "";
+  jsEditor.textContent = localStorage.getItem("js") || "";
+  Prism.highlightElement(htmlEditor);
+  Prism.highlightElement(cssEditor);
+  Prism.highlightElement(jsEditor);
   updatePreview(); // Load the preview on page load
 });
 
 // Update preview in iframe
 function updatePreview() {
-  const html = htmlEditor.value;
-  const css = cssEditor.value;
-  const js = jsEditor.value;
+  const html = htmlEditor.textContent;
+  const css = cssEditor.textContent;
+  const js = jsEditor.textContent;
 
   const hasBackgroundColor = /background-color/.test(css);
 
@@ -50,12 +60,12 @@ function copyCode(type) {
     const editor = type === "html" ? htmlEditor : type === "css" ? cssEditor : jsEditor;
 
     // Check if the code box is empty
-    if (editor.value.trim() === "") {
+    if (editor.textContent.trim() === "") {
         showCopyPopup("Error: The code box is empty! Please enter some code.", true);  // Pass 'true' for error
         return;
     }
 
-    navigator.clipboard.writeText(editor.value).then(() => {
+    navigator.clipboard.writeText(editor.textContent).then(() => {
         showCopyPopup(`${type.toUpperCase()} code copied!`, false);  // Pass 'false' for success
     });
 }
@@ -95,7 +105,7 @@ function showCopyPopup(message, isError) {
 // Download code as a zip file
 function downloadCode() {
     // Check if all code boxes are empty
-    if (!htmlEditor.value.trim() && !cssEditor.value.trim() && !jsEditor.value.trim()) {
+    if (!htmlEditor.textContent.trim() && !cssEditor.textContent.trim() && !jsEditor.textContent.trim()) {
       // Show an error if all boxes are empty
       showCopyPopup("Error: No code to download! Please add code to at least one editor.", true);
       return; // Prevent zip download if no code
@@ -104,9 +114,9 @@ function downloadCode() {
     const zip = new JSZip();
   
     // Add files to the zip if they have content
-    if (htmlEditor.value.trim()) zip.file("index.html", htmlEditor.value.trim());
-    if (cssEditor.value.trim()) zip.file("style.css", cssEditor.value.trim());
-    if (jsEditor.value.trim()) zip.file("script.js", jsEditor.value.trim());
+    if (htmlEditor.textContent.trim()) zip.file("index.html", htmlEditor.textContent.trim());
+    if (cssEditor.textContent.trim()) zip.file("style.css", cssEditor.textContent.trim());
+    if (jsEditor.textContent.trim()) zip.file("script.js", jsEditor.textContent.trim());
   
     // Generate and trigger download of the zip
     zip.generateAsync({ type: "blob" }).then(content => {
@@ -120,11 +130,48 @@ function downloadCode() {
 
 // Clear all fields and localStorage
 function clearAll() {
-  htmlEditor.value = "";
-  cssEditor.value = "";
-  jsEditor.value = "";
+  htmlEditor.textContent = "";
+  cssEditor.textContent = "";
+  jsEditor.textContent = "";
   localStorage.clear();
+  Prism.highlightElement(htmlEditor);
+  Prism.highlightElement(cssEditor);
+  Prism.highlightElement(jsEditor);
   updatePreview(); // Reset the preview after clearing
+}
+
+// Delete code from an editor
+function deleteCode(type) {
+  const editor = type === "html" ? htmlEditor : type === "css" ? cssEditor : jsEditor;
+  
+  // Check if there's any code to delete
+  if (!editor.textContent.trim()) {
+    showCopyPopup("Nothing to delete!", true);
+    return;
+  }
+
+  // Ask for confirmation
+  if (confirm(`Are you sure you want to delete all ${type.toUpperCase()} code?`)) {
+    editor.textContent = '';
+    localStorage.setItem(type, '');
+    Prism.highlightElement(editor);
+    updatePreview();
+    showCopyPopup(`${type.toUpperCase()} code deleted!`, false);
+  }
+}
+
+// Toggle between light and dark theme
+function toggleTheme() {
+  const html = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle');
+  const currentTheme = html.getAttribute('data-theme');
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  
+  html.setAttribute('data-theme', newTheme);
+  themeToggle.innerHTML = `<i class="fas fa-${newTheme === 'light' ? 'sun' : 'moon'}"></i>`;
+  
+  // Save theme preference
+  localStorage.setItem('theme', newTheme);
 }
 
 // Change theme
@@ -136,9 +183,9 @@ function changeTheme() {
 
 // Function for error handling when opening the preview
 function openPreview() {
-  const html = htmlEditor.value.trim();
-  const css = cssEditor.value.trim();
-  const js = jsEditor.value.trim();
+  const html = htmlEditor.textContent.trim();
+  const css = cssEditor.textContent.trim();
+  const js = jsEditor.textContent.trim();
   if (!html && !css && !js) {
     let errorPopup = document.getElementById('new-tab-error');
     if (!errorPopup) {
@@ -190,14 +237,161 @@ function openPreview() {
   newTab.document.close();
 }
 
+// View switching functionality
+function changeView(viewType) {
+    const main = document.querySelector('main');
+    
+    // Remove all view classes
+    main.classList.remove('view-bottom-preview');
+    main.classList.remove('view-left-preview');
+    main.classList.remove('view-right-preview');
+    
+    // Add new view class
+    main.classList.add(`view-${viewType}`);
+    
+    // Update active state of view buttons
+    document.querySelectorAll('.view-button').forEach(button => {
+        button.classList.remove('active');
+        if (button.dataset.view === viewType) {
+            button.classList.add('active');
+        }
+    });
 
+    // Re-initialize resizer for new view
+    // Removed resizer initialization
+}
+
+// Initialize view buttons
+document.querySelectorAll('.view-button').forEach(button => {
+    button.addEventListener('click', () => {
+        const viewType = button.dataset.view;
+        changeView(viewType);
+    });
+});
 
 // Event listeners for auto-save and update preview
 [htmlEditor, cssEditor, jsEditor].forEach((editor) => {
   editor.addEventListener("input", () => {
     updatePreview(); // Update preview whenever input changes
-    localStorage.setItem("html", htmlEditor.value); // Auto-save to localStorage for HTML
-    localStorage.setItem("css", cssEditor.value);  // Auto-save to localStorage for CSS
-    localStorage.setItem("js", jsEditor.value);    // Auto-save to localStorage for JS
+    localStorage.setItem("html", htmlEditor.textContent); // Auto-save to localStorage for HTML
+    localStorage.setItem("css", cssEditor.textContent);  // Auto-save to localStorage for CSS
+    localStorage.setItem("js", jsEditor.textContent);    // Auto-save to localStorage for JS
+    Prism.highlightElement(editor);
+  });
+
+  // Handle tab key
+  editor.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+      const tabNode = document.createTextNode("    ");
+      range.insertNode(tabNode);
+      range.setStartAfter(tabNode);
+      range.setEndAfter(tabNode);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   });
 });
+
+// Load layout when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Initial layout setup
+    initializeDefaultLayout();
+    
+    // Load any saved layout
+    loadLayout();
+});
+
+// Initialize default layout
+function initializeDefaultLayout() {
+    const main = document.querySelector('main');
+    const editors = document.querySelector('.editors');
+    const preview = document.querySelector('.preview-container');
+    
+    // Determine current view
+    const currentView = Array.from(main.classList)
+        .find(cls => cls.startsWith('view-')) || 'view-bottom-preview';
+    
+    // Set default sizes based on view
+    if (currentView === 'view-bottom-preview') {
+        editors.style.height = '30%';
+        preview.style.height = '70%';
+    } else {
+        // Left and right preview
+        editors.style.width = '30%';
+        preview.style.width = '70%';
+    }
+}
+
+// Load saved view preference
+function loadSavedView() {
+    const savedView = localStorage.getItem('preferredView');
+    if (savedView) {
+        changeView(savedView);
+    }
+}
+
+// Removed resizer functionality
+let isResizing = false;
+let currentResizer = null;
+let startPos = 0;
+let startSize = 0;
+
+function initResize(e) {
+    // This function is no longer needed
+}
+
+function resize(e) {
+    // This function is no longer needed
+}
+
+function updateSizeDisplay(display, resizer, size) {
+    // This function is no longer needed
+}
+
+function stopResize() {
+    // This function is no longer needed
+}
+
+function initializeResizer() {
+    // This function is no longer needed
+}
+
+// Remove any event listeners related to resizing
+function removeResizerEventListeners() {
+    document.removeEventListener('mousemove', resize);
+    document.removeEventListener('mouseup', stopResize);
+}
+
+// Call this function to clean up any resizer-related setup
+document.addEventListener('DOMContentLoaded', removeResizerEventListeners);
+
+// View Mode Popup
+const viewModeBtn = document.getElementById('view-mode-btn');
+const viewModePopup = document.getElementById('view-mode-popup');
+
+viewModeBtn.addEventListener('click', () => {
+  viewModePopup.classList.add('show');
+});
+
+// Close popup when clicking outside
+viewModePopup.addEventListener('click', (e) => {
+  if (e.target === viewModePopup) {
+    viewModePopup.classList.remove('show');
+  }
+});
+
+function changeView(mode) {
+  const main = document.querySelector('main');
+  main.className = `view-${mode}`;
+  viewModePopup.classList.remove('show');
+  localStorage.setItem('viewMode', mode);
+}
+
+// Load saved view mode
+const savedViewMode = localStorage.getItem('viewMode');
+if (savedViewMode) {
+  changeView(savedViewMode);
+}

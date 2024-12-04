@@ -1,62 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Code Previewer</title>
+  <title>Code Editor</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
 </head>
 <body>
   <header>
-    <h1>Code Previewer</h1>
-    <div class="controls">
-      <button onclick="clearAll()">Clear All</button>
-      <button onclick="downloadCode()">Download Code</button>
-      <button onclick="openPreview()">Open in New Tab</button>
-      <label for="theme-selector">Theme:</label>
-      <select id="theme-selector" onchange="changeTheme()">
-        <option value="default">Default</option>
-        <option value="purple">Purple</option>
-        <option value="blue">Blue</option>
-      </select>
+    <div class="header-content">
+      <h1>Code Editor</h1>
+      <div class="controls">
+        <div class="action-buttons">
+          <button onclick="clearAll()">Clear All</button>
+          <button onclick="downloadCode()">Download Code</button>
+          <button onclick="openPreview()">Open in New Tab</button>
+        </div>
+        <div class="view-controls">
+          <button id="view-mode-btn" title="Change View Mode">
+            <i class="fas fa-columns"></i>
+          </button>
+        </div>
+        <div class="theme-controls">
+          <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+            <i class="fas fa-moon"></i>
+          </button>
+          <label for="theme-selector">Color Theme:</label>
+          <select id="theme-selector" onchange="changeTheme()">
+            <option value="default">Default</option>
+            <option value="purple">Purple</option>
+            <option value="blue">Blue</option>
+          </select>
+        </div>
+      </div>
     </div>
   </header>
-  <main>
+  
+  <!-- View Mode Popup -->
+  <div id="view-mode-popup" class="popup">
+    <div class="popup-content">
+      <h3>Select View Mode</h3>
+      <div class="view-mode-options">
+        <button onclick="changeView('bottom-preview')" class="view-option">
+          <i class="fas fa-arrow-down"></i>
+          <span>Preview at Bottom</span>
+        </button>
+        <button onclick="changeView('left-preview')" class="view-option">
+          <i class="fas fa-arrow-left"></i>
+          <span>Preview on Left</span>
+        </button>
+        <button onclick="changeView('right-preview')" class="view-option">
+          <i class="fas fa-arrow-right"></i>
+          <span>Preview on Right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main class="view-vertical">
     <div class="editors">
       <div class="editor">
         <div class="editor-header">
           <label for="html-editor">HTML</label>
-          <button class="copy-btn" onclick="copyCode('html')">Copy</button>
+          <div class="editor-actions">
+            <button class="icon-btn" onclick="deleteCode('html')" title="Delete"><i class="fas fa-trash"></i></button>
+            <button class="icon-btn" onclick="copyCode('html')" title="Copy"><i class="fas fa-copy"></i></button>
+          </div>
         </div>
-        <textarea id="html-editor" placeholder="Write your HTML here..."></textarea>
+        <pre class="code-container"><code id="html-editor" class="language-html" contenteditable="true" spellcheck="false" data-placeholder="Enter HTML code here"></code></pre>
       </div>
+      
       <div class="editor">
         <div class="editor-header">
           <label for="css-editor">CSS</label>
-          <button class="copy-btn" onclick="copyCode('css')">Copy</button>
+          <div class="editor-actions">
+            <button class="icon-btn" onclick="deleteCode('css')" title="Delete"><i class="fas fa-trash"></i></button>
+            <button class="icon-btn" onclick="copyCode('css')" title="Copy"><i class="fas fa-copy"></i></button>
+          </div>
         </div>
-        <textarea id="css-editor" placeholder="Write your CSS here..."></textarea>
+        <pre class="code-container"><code id="css-editor" class="language-css" contenteditable="true" spellcheck="false" data-placeholder="Enter CSS code here"></code></pre>
       </div>
+      
       <div class="editor">
         <div class="editor-header">
           <label for="js-editor">JavaScript</label>
-          <button class="copy-btn" onclick="copyCode('js')">Copy</button>
+          <div class="editor-actions">
+            <button class="icon-btn" onclick="deleteCode('js')" title="Delete"><i class="fas fa-trash"></i></button>
+            <button class="icon-btn" onclick="copyCode('js')" title="Copy"><i class="fas fa-copy"></i></button>
+          </div>
         </div>
-        <textarea id="js-editor" placeholder="Write your JavaScript here..."></textarea>
+        <pre class="code-container"><code id="js-editor" class="language-javascript" contenteditable="true" spellcheck="false" data-placeholder="Enter JavaScript code here"></code></pre>
       </div>
     </div>
     <div class="preview-container">
       <iframe id="preview"></iframe>
     </div>
-   <!-- Copy Success Popup Backdrop -->
-<div id="copy-popup-backdrop"></div>
-
-<!-- Copy Success Popup -->
-<div id="copy-popup">Code copied!</div>
   </main>
+
+  <!-- Popups -->
+  <div id="copy-popup-backdrop"></div>
+  <div id="copy-popup">Code copied!</div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="script.js"></script>
 </body>
