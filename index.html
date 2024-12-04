@@ -14,28 +14,18 @@
     <div class="header-content">
       <h1>Code Editor</h1>
       <div class="controls">
-        <div class="action-buttons">
-          <button onclick="clearAll()">Clear All</button>
-          <button onclick="downloadCode()">Download Code</button>
-          <button onclick="openPreview()">Open in New Tab</button>
-        </div>
-        <div class="view-controls">
-          <button id="view-mode-btn" title="Change View Mode">
-            <i class="fas fa-columns"></i>
-          </button>
-        </div>
         <div class="theme-controls">
-          <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+          <button id="theme-toggle" title="Toggle light/dark mode">
             <i class="fas fa-moon"></i>
           </button>
-          <label for="theme-selector">Color Theme:</label>
-          <select id="theme-selector" onchange="changeTheme()">
-            <option value="default">Default</option>
-            <option value="purple">Purple</option>
-            <option value="blue">Blue</option>
-          </select>
         </div>
-      </div>
+        <div class="action-buttons">
+          <button onclick="clearAll()">Clear All</button>
+          <button class="download-btn" onclick="downloadCode()"><i class="fas fa-download"></i>Download</button>
+          <button class="open-tab-btn" onclick="openPreview()"><i class="fas fa-external-link-alt"></i>Open</button>
+        </div>
+        <button id="view-mode-btn" class="view-mode-btn" title="Change View Mode">
+        <i class="fas fa-columns"></i>View
     </div>
   </header>
   
@@ -66,8 +56,8 @@
         <div class="editor-header">
           <label for="html-editor">HTML</label>
           <div class="editor-actions">
-            <button class="icon-btn" onclick="deleteCode('html')" title="Delete"><i class="fas fa-trash"></i></button>
-            <button class="icon-btn" onclick="copyCode('html')" title="Copy"><i class="fas fa-copy"></i></button>
+            <button class="icon-btn delete-btn" onclick="deleteCode('html')" title="Delete"><i class="fas fa-trash"></i></button>
+            <button class="icon-btn copy-btn" onclick="copyCode('html')" title="Copy"><i class="fas fa-copy"></i>Copy</button>
           </div>
         </div>
         <pre class="code-container"><code id="html-editor" class="language-html" contenteditable="true" spellcheck="false" data-placeholder="Enter HTML code here"></code></pre>
@@ -77,8 +67,8 @@
         <div class="editor-header">
           <label for="css-editor">CSS</label>
           <div class="editor-actions">
-            <button class="icon-btn" onclick="deleteCode('css')" title="Delete"><i class="fas fa-trash"></i></button>
-            <button class="icon-btn" onclick="copyCode('css')" title="Copy"><i class="fas fa-copy"></i></button>
+            <button class="icon-btn delete-btn" onclick="deleteCode('css')" title="Delete"><i class="fas fa-trash"></i></button>
+            <button class="icon-btn copy-btn" onclick="copyCode('css')" title="Copy"><i class="fas fa-copy"></i>Copy</button>
           </div>
         </div>
         <pre class="code-container"><code id="css-editor" class="language-css" contenteditable="true" spellcheck="false" data-placeholder="Enter CSS code here"></code></pre>
@@ -88,8 +78,8 @@
         <div class="editor-header">
           <label for="js-editor">JavaScript</label>
           <div class="editor-actions">
-            <button class="icon-btn" onclick="deleteCode('js')" title="Delete"><i class="fas fa-trash"></i></button>
-            <button class="icon-btn" onclick="copyCode('js')" title="Copy"><i class="fas fa-copy"></i></button>
+            <button class="icon-btn delete-btn" onclick="deleteCode('js')" title="Delete"><i class="fas fa-trash"></i></button>
+            <button class="icon-btn copy-btn" onclick="copyCode('js')" title="Copy"><i class="fas fa-copy"></i>Copy</button>
           </div>
         </div>
         <pre class="code-container"><code id="js-editor" class="language-javascript" contenteditable="true" spellcheck="false" data-placeholder="Enter JavaScript code here"></code></pre>

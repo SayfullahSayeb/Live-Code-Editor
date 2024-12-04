@@ -2,25 +2,9 @@ const htmlEditor = document.getElementById("html-editor");
 const cssEditor = document.getElementById("css-editor");
 const jsEditor = document.getElementById("js-editor");
 const iframe = document.getElementById("preview");
-const themeSelector = document.getElementById("theme-selector");
-
-const themes = {
-  default: { color: "#4caf50", hover: "#388e3c" },
-  purple: { color: "#a29bfe", hover: "#836fa9" },
-  green: { color: "#55efc4", hover: "#39bba3" },
-  yellow: { color: "#fdcb6e", hover: "#d7a153" },
-  blue: { color: "#74b9ff", hover: "#539dc7" },
-};
 
 // Auto-save functionality
 window.addEventListener("load", () => {
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) {
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.innerHTML = `<i class="fas fa-${savedTheme === 'light' ? 'sun' : 'moon'}"></i>`;
-  }
-  
   htmlEditor.textContent = localStorage.getItem("html") || "";
   cssEditor.textContent = localStorage.getItem("css") || "";
   jsEditor.textContent = localStorage.getItem("js") || "";
@@ -28,6 +12,14 @@ window.addEventListener("load", () => {
   Prism.highlightElement(cssEditor);
   Prism.highlightElement(jsEditor);
   updatePreview(); // Load the preview on page load
+  
+  // Load saved theme on startup
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.innerHTML = `<i class="fas fa-${savedTheme === 'light' ? 'sun' : 'moon'}"></i>`;
+  }
 });
 
 // Update preview in iframe
@@ -104,29 +96,31 @@ function showCopyPopup(message, isError) {
 
 // Download code as a zip file
 function downloadCode() {
+    const html = htmlEditor.textContent;
+    const css = cssEditor.textContent;
+    const js = jsEditor.textContent;
+
     // Check if all code boxes are empty
-    if (!htmlEditor.textContent.trim() && !cssEditor.textContent.trim() && !jsEditor.textContent.trim()) {
-      // Show an error if all boxes are empty
-      showCopyPopup("Error: No code to download! Please add code to at least one editor.", true);
-      return; // Prevent zip download if no code
+    if (html.trim() === "" && css.trim() === "" && js.trim() === "") {
+        showCopyPopup("Error: All code boxes are empty! Please enter some code.", true);
+        return;
     }
-  
+
     const zip = new JSZip();
-  
-    // Add files to the zip if they have content
-    if (htmlEditor.textContent.trim()) zip.file("index.html", htmlEditor.textContent.trim());
-    if (cssEditor.textContent.trim()) zip.file("style.css", cssEditor.textContent.trim());
-    if (jsEditor.textContent.trim()) zip.file("script.js", jsEditor.textContent.trim());
-  
-    // Generate and trigger download of the zip
-    zip.generateAsync({ type: "blob" }).then(content => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(content);
-      a.download = "code_preview.zip";
-      a.click();
+    zip.file("index.html", html);
+    zip.file("styles.css", css);
+    zip.file("script.js", js);
+
+    zip.generateAsync({ type: "blob" }).then(function(content) {
+        const downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(content);
+        downloadLink.download = "code.zip";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        showCopyPopup("Code downloaded successfully!", false);
     });
-  }
-  
+}
 
 // Clear all fields and localStorage
 function clearAll() {
@@ -160,28 +154,7 @@ function deleteCode(type) {
   }
 }
 
-// Toggle between light and dark theme
-function toggleTheme() {
-  const html = document.documentElement;
-  const themeToggle = document.getElementById('theme-toggle');
-  const currentTheme = html.getAttribute('data-theme');
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  
-  html.setAttribute('data-theme', newTheme);
-  themeToggle.innerHTML = `<i class="fas fa-${newTheme === 'light' ? 'sun' : 'moon'}"></i>`;
-  
-  // Save theme preference
-  localStorage.setItem('theme', newTheme);
-}
-
-// Change theme
-function changeTheme() {
-  const theme = themes[themeSelector.value];
-  document.documentElement.style.setProperty("--theme-color", theme.color);
-  document.documentElement.style.setProperty("--theme-hover-color", theme.hover);
-}
-
-// Function for error handling when opening the preview
+// Open preview in new tab
 function openPreview() {
   const html = htmlEditor.textContent.trim();
   const css = cssEditor.textContent.trim();
@@ -395,3 +368,20 @@ const savedViewMode = localStorage.getItem('viewMode');
 if (savedViewMode) {
   changeView(savedViewMode);
 }
+
+// Toggle between light and dark theme
+function toggleTheme() {
+  const html = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle');
+  const currentTheme = html.getAttribute('data-theme');
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  
+  html.setAttribute('data-theme', newTheme);
+  themeToggle.innerHTML = `<i class="fas fa-${newTheme === 'light' ? 'sun' : 'moon'}"></i>`;
+  
+  // Save theme preference
+  localStorage.setItem('theme', newTheme);
+}
+
+// Add theme toggle click handler
+document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
