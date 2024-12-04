@@ -35,27 +35,6 @@
     </div>
   </header>
   
-  <!-- View Mode Popup -->
-  <div id="view-mode-popup" class="popup">
-    <div class="popup-content">
-      <h3>Select View Mode</h3>
-      <div class="view-mode-options">
-        <button onclick="changeView('bottom-preview')" class="view-option">
-          <i class="fas fa-arrow-down"></i>
-          <span>Preview at Bottom</span>
-        </button>
-        <button onclick="changeView('left-preview')" class="view-option">
-          <i class="fas fa-arrow-left"></i>
-          <span>Preview on Left</span>
-        </button>
-        <button onclick="changeView('right-preview')" class="view-option">
-          <i class="fas fa-arrow-right"></i>
-          <span>Preview on Right</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
   <main class="view-vertical">
     <div class="editors">
       <div class="editor">
@@ -99,6 +78,28 @@
   <!-- Popups -->
   <div id="copy-popup-backdrop"></div>
   <div id="copy-popup">Code copied!</div>
+  
+  <!-- View Mode Popup -->
+  <div id="view-mode-popup-backdrop"></div>
+  <div id="view-mode-popup">
+    <div class="view-mode-content">
+      <h3>Select View Mode</h3>
+      <div class="view-mode-options">
+        <button onclick="changeView('bottom')" class="view-option">
+          <i class="fas fa-arrow-down"></i>
+          <span>Preview at Bottom</span>
+        </button>
+        <button onclick="changeView('left')" class="view-option">
+          <i class="fas fa-arrow-left"></i>
+          <span>Preview on Left</span>
+        </button>
+        <button onclick="changeView('right')" class="view-option">
+          <i class="fas fa-arrow-right"></i>
+          <span>Preview on Right</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="script.js"></script>
