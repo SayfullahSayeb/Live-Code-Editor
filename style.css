@@ -491,6 +491,10 @@ code[contenteditable="true"] {
   }
 }
 
+:not(pre)>code[class*=language-], pre[class*=language-] {
+  background: none !important;
+}
+
 @media (max-width: 480px) {
   .editor {
     min-height: 150px;
