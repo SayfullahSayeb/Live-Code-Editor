@@ -3,15 +3,18 @@ const cssEditor = document.getElementById("css-editor");
 const jsEditor = document.getElementById("js-editor");
 const iframe = document.getElementById("preview");
 
+let isTyping = false;
+let typingTimer;
+
 // Auto-save functionality
 window.addEventListener("load", () => {
   htmlEditor.textContent = localStorage.getItem("html") || "";
   cssEditor.textContent = localStorage.getItem("css") || "";
   jsEditor.textContent = localStorage.getItem("js") || "";
-  Prism.highlightElement(htmlEditor);
-  Prism.highlightElement(cssEditor);
-  Prism.highlightElement(jsEditor);
-  updatePreview(); // Load the preview on page load
+  
+  // Initial highlighting
+  highlightAll();
+  updatePreview();
   
   // Load saved theme on startup
   const savedTheme = localStorage.getItem('theme');
@@ -25,6 +28,12 @@ window.addEventListener("load", () => {
   const savedMode = localStorage.getItem('preferredViewMode') || 'bottom';
   changeView(savedMode);
 });
+
+function highlightAll() {
+  Prism.highlightElement(htmlEditor);
+  Prism.highlightElement(cssEditor);
+  Prism.highlightElement(jsEditor);
+}
 
 // Update preview in iframe
 function updatePreview() {
@@ -132,9 +141,7 @@ function clearAll() {
   cssEditor.textContent = "";
   jsEditor.textContent = "";
   localStorage.clear();
-  Prism.highlightElement(htmlEditor);
-  Prism.highlightElement(cssEditor);
-  Prism.highlightElement(jsEditor);
+  highlightAll();
   updatePreview(); // Reset the preview after clearing
 }
 
@@ -150,7 +157,7 @@ function deleteCode(type) {
 
   editor.textContent = '';
   localStorage.setItem(type, '');
-  Prism.highlightElement(editor);
+  highlightAll();
   updatePreview();
   showCopyPopup(`${type.toUpperCase()} code deleted!`, false);
 }
@@ -227,11 +234,22 @@ function changeView(mode) {
 // Event listeners for auto-save and update preview
 [htmlEditor, cssEditor, jsEditor].forEach((editor) => {
   editor.addEventListener("input", () => {
-    updatePreview(); // Update preview whenever input changes
-    localStorage.setItem("html", htmlEditor.textContent); // Auto-save to localStorage for HTML
-    localStorage.setItem("css", cssEditor.textContent);  // Auto-save to localStorage for CSS
-    localStorage.setItem("js", jsEditor.textContent);    // Auto-save to localStorage for JS
-    Prism.highlightElement(editor);
+    if (!isTyping) {
+      isTyping = true;
+    }
+    
+    clearTimeout(typingTimer);
+    
+    updatePreview();
+    localStorage.setItem("html", htmlEditor.textContent);
+    localStorage.setItem("css", cssEditor.textContent);
+    localStorage.setItem("js", jsEditor.textContent);
+    
+    // Wait for user to stop typing before highlighting
+    typingTimer = setTimeout(() => {
+      isTyping = false;
+      Prism.highlightElement(editor);
+    }, 1000);
   });
 
   // Handle tab key
