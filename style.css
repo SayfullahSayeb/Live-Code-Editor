@@ -538,7 +538,6 @@ code[contenteditable="true"] {
   }
 }
 
-/* View Mode Layouts */
 /* Default/Bottom Preview */
 .view-vertical {
   flex-direction: column;
@@ -549,7 +548,7 @@ code[contenteditable="true"] {
   flex-direction: row !important;
   gap: 1rem;
   height: auto;
-  min-height: 300px;
+  min-height: 450px;
 }
 
 .view-vertical .preview-container {
