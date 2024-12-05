@@ -137,20 +137,22 @@ function showCopyPopup(message, isError) {
 
 // Download code as a zip file
 function downloadCode() {
-    const html = htmlEditor.textContent;
-    const css = cssEditor.textContent;
-    const js = jsEditor.textContent;
+    const html = htmlEditor.textContent.trim();
+    const css = cssEditor.textContent.trim();
+    const js = jsEditor.textContent.trim();
 
     // Check if all code boxes are empty
-    if (html.trim() === "" && css.trim() === "" && js.trim() === "") {
+    if (!html && !css && !js) {
         showCopyPopup("Error: All code boxes are empty! Please enter some code.", true);
         return;
     }
 
     const zip = new JSZip();
-    zip.file("index.html", html);
-    zip.file("styles.css", css);
-    zip.file("script.js", js);
+    
+    // Only add files that have content
+    if (html) zip.file("index.html", html);
+    if (css) zip.file("styles.css", css);
+    if (js) zip.file("script.js", js);
 
     zip.generateAsync({ type: "blob" }).then(function(content) {
         const downloadLink = document.createElement("a");
