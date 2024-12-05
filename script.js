@@ -3,8 +3,39 @@ const cssEditor = document.getElementById("css-editor");
 const jsEditor = document.getElementById("js-editor");
 const iframe = document.getElementById("preview");
 
-let isTyping = false;
-let typingTimer;
+// Custom highlighting function that preserves cursor position
+function highlightWithCursorPreservation(editor) {
+  const selection = window.getSelection();
+  const range = selection.getRangeAt(0);
+  
+  // Store cursor position
+  const preCaretRange = range.cloneRange();
+  preCaretRange.selectNodeContents(editor);
+  preCaretRange.setEnd(range.endContainer, range.endOffset);
+  const caretOffset = preCaretRange.toString().length;
+  
+  // Highlight code
+  Prism.highlightElement(editor);
+  
+  // Restore cursor position
+  const textNodes = [];
+  const walk = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null, false);
+  while (walk.nextNode()) textNodes.push(walk.currentNode);
+  
+  let currentLength = 0;
+  for (const node of textNodes) {
+    const nodeLength = node.length;
+    if (currentLength + nodeLength >= caretOffset) {
+      const newRange = document.createRange();
+      newRange.setStart(node, caretOffset - currentLength);
+      newRange.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(newRange);
+      break;
+    }
+    currentLength += nodeLength;
+  }
+}
 
 // Auto-save functionality
 window.addEventListener("load", () => {
@@ -13,7 +44,10 @@ window.addEventListener("load", () => {
   jsEditor.textContent = localStorage.getItem("js") || "";
   
   // Initial highlighting
-  highlightAll();
+  Prism.highlightElement(htmlEditor);
+  Prism.highlightElement(cssEditor);
+  Prism.highlightElement(jsEditor);
+  
   updatePreview();
   
   // Load saved theme on startup
@@ -28,12 +62,6 @@ window.addEventListener("load", () => {
   const savedMode = localStorage.getItem('preferredViewMode') || 'bottom';
   changeView(savedMode);
 });
-
-function highlightAll() {
-  Prism.highlightElement(htmlEditor);
-  Prism.highlightElement(cssEditor);
-  Prism.highlightElement(jsEditor);
-}
 
 // Update preview in iframe
 function updatePreview() {
@@ -141,7 +169,9 @@ function clearAll() {
   cssEditor.textContent = "";
   jsEditor.textContent = "";
   localStorage.clear();
-  highlightAll();
+  Prism.highlightElement(htmlEditor);
+  Prism.highlightElement(cssEditor);
+  Prism.highlightElement(jsEditor);
   updatePreview(); // Reset the preview after clearing
 }
 
@@ -157,7 +187,7 @@ function deleteCode(type) {
 
   editor.textContent = '';
   localStorage.setItem(type, '');
-  highlightAll();
+  Prism.highlightElement(editor);
   updatePreview();
   showCopyPopup(`${type.toUpperCase()} code deleted!`, false);
 }
@@ -233,23 +263,18 @@ function changeView(mode) {
 
 // Event listeners for auto-save and update preview
 [htmlEditor, cssEditor, jsEditor].forEach((editor) => {
+  let lastContent = editor.textContent;
+  
   editor.addEventListener("input", () => {
-    if (!isTyping) {
-      isTyping = true;
+    // Only highlight if content actually changed
+    if (lastContent !== editor.textContent) {
+      lastContent = editor.textContent;
+      updatePreview();
+      localStorage.setItem("html", htmlEditor.textContent);
+      localStorage.setItem("css", cssEditor.textContent);
+      localStorage.setItem("js", jsEditor.textContent);
+      highlightWithCursorPreservation(editor);
     }
-    
-    clearTimeout(typingTimer);
-    
-    updatePreview();
-    localStorage.setItem("html", htmlEditor.textContent);
-    localStorage.setItem("css", cssEditor.textContent);
-    localStorage.setItem("js", jsEditor.textContent);
-    
-    // Wait for user to stop typing before highlighting
-    typingTimer = setTimeout(() => {
-      isTyping = false;
-      Prism.highlightElement(editor);
-    }, 1000);
   });
 
   // Handle tab key
@@ -264,6 +289,9 @@ function changeView(mode) {
       range.setEndAfter(tabNode);
       selection.removeAllRanges();
       selection.addRange(range);
+      
+      // Trigger input event to update highlighting
+      editor.dispatchEvent(new Event('input'));
     }
   });
 });
