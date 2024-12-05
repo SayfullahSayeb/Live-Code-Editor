@@ -20,9 +20,9 @@ A powerful, browser-based code editor for HTML, CSS, and JavaScript with real-ti
 - **Smart Indentation**: Proper tab key handling
 - **Responsive Design**: Works on desktop and mobile devices
 
-## Screenshots
+## 📸 Screenshots
 
-*(Include relevant screenshots of the editor interface, preview, and popups)*
+![Screenshots](Screenshot.jpg)
 
 
 ## 🛠️ Built With
@@ -68,7 +68,7 @@ Contributions, issues, and feature requests are welcome! Feel free to check issu
 
 ## 👥 Authors
 
-- **Sayfullah Sayeb** - *Initial work*
+- **[Sayfullah Sayeb](https://github.com/SayfullahSayeb)** - *Initial work*
 
 ## 🙏 Acknowledgments
 
