@@ -5,21 +5,21 @@
 
 /* Theme Variables */
 [data-theme="dark"] {
-  --bg-color: #1e1e1e;
-  --editor-bg: #282c34;
-  --header-bg: #21252b;
+  --bg-color: #13111C;
+  --editor-bg: #1A1625;
+  --header-bg: #201C2B;
   --text-color: #fff;
   --text-secondary: #888;
-  --border-color: #444;
+  --border-color: #2D2839;
 }
 
 [data-theme="light"] {
-  --bg-color: #ffffff;
-  --editor-bg: #f8f9fa;
-  --header-bg: #f1f3f5;
+  --bg-color: #F4F1FF;
+  --editor-bg: #FFFFFF;
+  --header-bg: #FDFCFF;
   --text-color: #212529;
   --text-secondary: #6c757d;
-  --border-color: #dee2e6;
+  --border-color: #E9E6F3;
   --editor-text: #495057;
   --theme-color: #2b8a3e;
   --theme-hover-color: #2b7a3e;
@@ -39,6 +39,11 @@ body {
   padding: 0;
   min-height: 100vh;
   background-color: var(--bg-color);
+  background-image: 
+    radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.03) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.03) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(34, 197, 94, 0.03) 0px, transparent 50%);
   color: var(--text-color);
   font-family: 'Fira Code', monospace;
   overflow-y: auto;
